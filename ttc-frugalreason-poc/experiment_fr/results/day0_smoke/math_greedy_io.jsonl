@@ -1,0 +1,10 @@
+{"model": "qwen2.5:3b", "dataset": "math", "strategy": "greedy_io", "qid": "math_0", "selected_answer": "2", "correct": false, "latency_seconds": 6.8541, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "math", "strategy": "greedy_io", "qid": "math_1", "selected_answer": "3", "correct": false, "latency_seconds": 9.0608, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "math", "strategy": "greedy_io", "qid": "math_2", "selected_answer": "7", "correct": false, "latency_seconds": 10.5846, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "math", "strategy": "greedy_io", "qid": "math_3", "selected_answer": "0.67", "correct": false, "latency_seconds": 10.4209, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "math", "strategy": "greedy_io", "qid": "math_4", "selected_answer": "42", "correct": true, "latency_seconds": 7.2431, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "math", "strategy": "greedy_io", "qid": "math_5", "selected_answer": "3", "correct": false, "latency_seconds": 10.3149, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "math", "strategy": "greedy_io", "qid": "math_6", "selected_answer": "13", "correct": false, "latency_seconds": 7.5448, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "math", "strategy": "greedy_io", "qid": "math_7", "selected_answer": "2", "correct": false, "latency_seconds": 10.2921, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "math", "strategy": "greedy_io", "qid": "math_8", "selected_answer": "5", "correct": true, "latency_seconds": 5.6328, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "math", "strategy": "greedy_io", "qid": "math_9", "selected_answer": "7", "correct": false, "latency_seconds": 8.961, "hardware_type": "cpu"}

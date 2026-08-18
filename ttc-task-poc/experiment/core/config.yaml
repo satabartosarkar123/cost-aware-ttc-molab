@@ -1,0 +1,72 @@
+# ============================================================
+# TTC-Task POC — Master Configuration
+# ============================================================
+
+ollama:
+  # base_url is overridden by the OLLAMA_BASE_URL environment variable if set.
+  # Set OLLAMA_BASE_URL to your Kaggle ngrok URL in molab_run.py.
+  base_url: "http://localhost:11434"
+  preferred_model: "qwen2.5:3b"
+  fallback_model: "llama3.2:3b"
+  timeout_seconds: 60
+  max_retries: 3
+  retry_delay_seconds: 2
+
+sampling:
+  seed: 0
+  questions_per_task: 50
+  max_questions: 150
+
+strategies:
+  greedy_io:
+    temperature: 0.0
+    max_tokens: 1024
+  greedy_cot:
+    temperature: 0.0
+    max_tokens: 1024
+  self_consistency:
+    temperature: 0.7
+    max_tokens: 1024
+    n_samples: 5
+  best_of_n:
+    temperature: 0.7
+    max_tokens: 1024
+    n_samples: 5
+  tree_of_thought:
+    propose_temperature: 0.7
+    vote_temperature: 0.0
+    max_tokens_generation: 1024
+    max_tokens_vote: 256
+    breadth_k: 3
+
+tasks:
+  gsm8k:
+    dataset: "openai/gsm8k"
+    split: "test"
+    subset: "main"
+    type: "math"
+  strategyqa:
+    datasets_to_try:
+      - "wics/strategy_qa"
+      - "tasksource/strategy_qa"
+      - "ChilleD/StrategyQA"
+    fallback_dataset: "allenai/ai2_arc"
+    fallback_subset: "ARC-Challenge"
+    type: "commonsense"
+  game24:
+    type: "planning"
+    source: "hardcoded"
+
+parse_rate_threshold: 0.85
+
+timeouts:
+  per_question_seconds: 120
+  per_api_call_seconds: 60
+
+paths:
+  raw_logs: "results/raw_logs"
+  parsed: "results/parsed"
+  summary: "results/summary"
+  plots: "plots"
+  reports: "reports"
+  system_logs: "logs"

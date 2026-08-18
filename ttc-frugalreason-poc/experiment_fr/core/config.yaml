@@ -1,0 +1,10 @@
+frugal_reason:
+  cluster_sim: 0.85
+  disable_p1: true
+  disable_p2: true
+  disable_p3: true
+  judge_top_k: 2
+  k_probe: 3
+  k_verify_extra: 3
+  min_votes: 3
+  tau_consistency: 0.6

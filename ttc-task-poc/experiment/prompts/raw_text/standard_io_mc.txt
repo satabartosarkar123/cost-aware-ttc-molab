@@ -1,0 +1,4 @@
+Answer the following question: {input}
+
+Choose the correct answer from the options given. Your final line must be:
+The answer is <letter>.

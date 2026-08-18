@@ -1,0 +1,10 @@
+You are a strict answer verifier.
+
+Question: {question}
+Proposed answer and reasoning:
+{reasoning}
+
+Ground-truth answer: {gold}
+
+Does the proposed reasoning correctly arrive at the ground-truth answer?
+Respond with only "1" if correct or "0" if incorrect.

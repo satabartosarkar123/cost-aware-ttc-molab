@@ -1,0 +1,49 @@
+flowchart TD
+    Start([Input: Question Q]) --> EE{Enable Early Exit?}
+    
+    %% Stage 1: Early Exit
+    EE -- Yes --> GenIO["Generate IO response T=0.0"]
+    EE -- Yes --> GenCoT["Generate CoT response T=0.0"]
+    GenIO --> Parse1["Parse A_IO"]
+    GenCoT --> Parse2["Parse A_CoT"]
+    Parse1 --> Compare{"A_IO == A_CoT?"}
+    Parse2 --> Compare
+    
+    Compare -- Yes --> ReturnEE(["Return A_IO"])
+    Compare -- No --> SampleN
+    EE -- No --> SampleN
+    
+    %% Stage 2: Sampling
+    SampleN["Sample N=5 CoT rationales T=0.7"] --> ParseN["Parse answers A_1...A_N"]
+    
+    %% Stage 3: Clustering
+    ParseN --> Cluster["Semantic Clustering of rationales"]
+    Cluster --> Majority["Determine majority answer for each cluster"]
+    Majority --> RepRat["Find longest rationale as representative for cluster"]
+    
+    %% Stage 4: Prior Calculation
+    RepRat --> DistinctA["Identify unique answers U"]
+    DistinctA --> CalcPrior["Calculate Prior P(A) = sum(cluster sizes) / N"]
+    
+    %% Stage 5: Verification
+    CalcPrior --> RouteCheck{"Task Type?"}
+    
+    RouteCheck -->|"Deterministic (e.g., Code, Math)"| ExecVerifier["Execution Verifier on Rep Rationale"]
+    ExecVerifier --> ExecResult{"Any Passed?"}
+    
+    RouteCheck -->|"Open-ended / Reasoning"| Top2["Select Top 2 answers based on P(A)"]
+    ExecResult -- No --> Top2
+    
+    Top2 --> LLMJudge["LLM Judge scores Rep Rationales"]
+    
+    ExecResult -- Yes --> SetV1["V(A) = 1.0 (Pass) or 0.0 (Fail)"]
+    LLMJudge --> SetV2["V(A) = Judge Confidence (0.0 - 1.0)"]
+    
+    %% Stage 6: Selection
+    SetV1 --> Bayes["Bayesian-Calibrated Selection"]
+    SetV2 --> Bayes
+    
+    Bayes --> ScoreFormula["S(A) = α * V(A) + (1 - α) * log(P(A) + ε)"]
+    ScoreFormula --> MaxS["Select A with max S(A)"]
+    
+    MaxS --> End(["Return Final Answer A*"])

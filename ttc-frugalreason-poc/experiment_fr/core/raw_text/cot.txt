@@ -1,0 +1,9 @@
+Answer the following question: {input}
+
+Make a strategy then write. Your output should be of the following format:
+
+Strategy:
+Describe your reasoning step by step.
+
+Answer:
+The answer is {answer_format}.

@@ -1,0 +1,10 @@
+{"model": "qwen2.5:3b", "dataset": "math", "strategy": "zero_shot_tot_k3", "qid": "math_0", "selected_answer": "(3\\frac{\\pi{2)", "correct": false, "latency_seconds": 34.7098, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "math", "strategy": "zero_shot_tot_k3", "qid": "math_1", "selected_answer": "3.6666666666666665", "correct": false, "latency_seconds": 37.1158, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "math", "strategy": "zero_shot_tot_k3", "qid": "math_2", "selected_answer": "9", "correct": true, "latency_seconds": 35.9487, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "math", "strategy": "zero_shot_tot_k3", "qid": "math_3", "selected_answer": "Angela", "correct": false, "latency_seconds": 28.6272, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "math", "strategy": "zero_shot_tot_k3", "qid": "math_4", "selected_answer": "42", "correct": true, "latency_seconds": 27.6979, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "math", "strategy": "zero_shot_tot_k3", "qid": "math_5", "selected_answer": "27", "correct": true, "latency_seconds": 34.6965, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "math", "strategy": "zero_shot_tot_k3", "qid": "math_6", "selected_answer": "3\\sqrt{13", "correct": true, "latency_seconds": 34.1262, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "math", "strategy": "zero_shot_tot_k3", "qid": "math_7", "selected_answer": "220", "correct": false, "latency_seconds": 32.98, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "math", "strategy": "zero_shot_tot_k3", "qid": "math_8", "selected_answer": "5", "correct": true, "latency_seconds": 25.3572, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "math", "strategy": "zero_shot_tot_k3", "qid": "math_9", "selected_answer": "4.9", "correct": false, "latency_seconds": 29.297, "hardware_type": "cpu"}

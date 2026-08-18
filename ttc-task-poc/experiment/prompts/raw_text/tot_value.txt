@@ -1,0 +1,4 @@
+Evaluate if the given numbers can reach 24 (sure/maybe/impossible).
+Numbers: {nums}
+Steps so far: {steps}
+Answer with one word: "sure", "maybe", or "impossible".

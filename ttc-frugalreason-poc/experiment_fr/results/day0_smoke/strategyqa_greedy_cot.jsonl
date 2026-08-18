@@ -1,0 +1,10 @@
+{"model": "qwen2.5:3b", "dataset": "strategyqa", "strategy": "greedy_cot", "qid": "strategyqa_0", "selected_answer": "no", "correct": false, "latency_seconds": 6.1208, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "strategyqa", "strategy": "greedy_cot", "qid": "strategyqa_1", "selected_answer": "no", "correct": false, "latency_seconds": 6.9003, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "strategyqa", "strategy": "greedy_cot", "qid": "strategyqa_2", "selected_answer": "no", "correct": false, "latency_seconds": 7.7498, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "strategyqa", "strategy": "greedy_cot", "qid": "strategyqa_3", "selected_answer": "no", "correct": false, "latency_seconds": 4.9125, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "strategyqa", "strategy": "greedy_cot", "qid": "strategyqa_4", "selected_answer": "yes", "correct": false, "latency_seconds": 7.1378, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "strategyqa", "strategy": "greedy_cot", "qid": "strategyqa_5", "selected_answer": "yes", "correct": false, "latency_seconds": 5.0159, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "strategyqa", "strategy": "greedy_cot", "qid": "strategyqa_6", "selected_answer": "no", "correct": false, "latency_seconds": 7.904, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "strategyqa", "strategy": "greedy_cot", "qid": "strategyqa_7", "selected_answer": "no", "correct": true, "latency_seconds": 6.274, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "strategyqa", "strategy": "greedy_cot", "qid": "strategyqa_8", "selected_answer": "no", "correct": true, "latency_seconds": 7.4744, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "strategyqa", "strategy": "greedy_cot", "qid": "strategyqa_9", "selected_answer": "no", "correct": true, "latency_seconds": 6.555, "hardware_type": "cpu"}

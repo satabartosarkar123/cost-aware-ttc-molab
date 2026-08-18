@@ -1,0 +1,7 @@
+Given an instruction and several choices, decide which choice is most promising.
+Analyze each choice in detail, then conclude in exactly this format:
+"The best choice is {{s}}", where s is the integer id of the choice.
+
+Instruction: {instruction}
+
+{choices}

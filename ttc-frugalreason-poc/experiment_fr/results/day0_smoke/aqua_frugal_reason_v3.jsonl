@@ -1,0 +1,10 @@
+{"model": "qwen2.5:3b", "dataset": "aqua", "strategy": "frugal_reason_v3", "qid": "aqua_0", "selected_answer": "A", "correct": true, "latency_seconds": 122.2504, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "aqua", "strategy": "frugal_reason_v3", "qid": "aqua_1", "selected_answer": "E", "correct": true, "latency_seconds": 16.2243, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "aqua", "strategy": "frugal_reason_v3", "qid": "aqua_2", "selected_answer": "A", "correct": true, "latency_seconds": 14.4078, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "aqua", "strategy": "frugal_reason_v3", "qid": "aqua_3", "selected_answer": "A", "correct": false, "latency_seconds": 88.6788, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "aqua", "strategy": "frugal_reason_v3", "qid": "aqua_4", "selected_answer": "B", "correct": true, "latency_seconds": 14.3738, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "aqua", "strategy": "frugal_reason_v3", "qid": "aqua_5", "selected_answer": "A", "correct": false, "latency_seconds": 96.7771, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "aqua", "strategy": "frugal_reason_v3", "qid": "aqua_6", "selected_answer": "D", "correct": true, "latency_seconds": 16.3859, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "aqua", "strategy": "frugal_reason_v3", "qid": "aqua_7", "selected_answer": "C", "correct": true, "latency_seconds": 20.78, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "aqua", "strategy": "frugal_reason_v3", "qid": "aqua_8", "selected_answer": "E", "correct": true, "latency_seconds": 89.8509, "hardware_type": "cpu"}
+{"model": "qwen2.5:3b", "dataset": "aqua", "strategy": "frugal_reason_v3", "qid": "aqua_9", "selected_answer": "D", "correct": true, "latency_seconds": 12.1176, "hardware_type": "cpu"}

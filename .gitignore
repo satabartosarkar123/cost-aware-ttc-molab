@@ -1,0 +1,47 @@
+﻿# ── OS / editor ───────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+
+# ── Python ────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+
+# ── Jupyter checkpoints ───────────────────────────────────────────
+.ipynb_checkpoints/
+
+# ── Secrets — NEVER commit ────────────────────────────────────────
+rclone.conf
+.env
+secrets.json
+
+# ── Large binaries ────────────────────────────────────────────────
+*.exe
+*.bin
+OllamaSetup.exe
+*.zip
+
+# ── Runtime logs ─────────────────────────────────────────────────
+*.log
+/rq2_part1/logs/
+/ttc-frugalreason-poc/experiment_fr/logs/
+/ttc-task-poc/experiment/logs/
+
+# ── SQLite checkpoint dbs ─────────────────────────────────────────
+*.db
+*.db-shm
+*.db-wal
+
+# ── Temp / scratch ────────────────────────────────────────────────
+ttc-frugalreason-poc/experiment_fr/temp_prm800k/
+_smoke_rq2.py
+run_rq2_part1_smoke.py
+
+# NOTE: results/ checkpoints/ reports/ plots/ are ALL tracked
+# Molab pushes them back, you get them with: git pull

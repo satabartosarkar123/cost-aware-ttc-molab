@@ -1,0 +1,16 @@
+task,strategy,num_examples,accuracy,parse_rate,avg_latency_seconds,avg_total_tokens,avg_model_calls,avg_energy_joules,oracle_accuracy
+game24,best_of_n,10,0.2,1.0,129.78673999999998,3591.7,6.0,,0.7
+game24,greedy_cot,10,0.2,0.8,22.69423,627.4,1.0,,
+game24,greedy_io,10,0.2,1.0,12.16867,328.4,1.0,,
+game24,self_consistency,10,0.1,1.0,129.46447999999998,3588.1,5.0,,0.7
+game24,tree_of_thought,10,0.2,1.0,196.6541,10409.8,8.0,,
+gsm8k,best_of_n,10,0.7,1.0,83.1063,2527.8,5.0,,0.7
+gsm8k,greedy_cot,10,0.4,1.0,15.345879999999998,461.8,1.0,,
+gsm8k,greedy_io,10,0.7,1.0,10.584670000000001,313.1,1.0,,
+gsm8k,self_consistency,10,0.6,1.0,76.77497000000001,2369.1,5.0,,0.6
+gsm8k,tree_of_thought,10,0.5,1.0,127.23577,7024.2,8.0,,
+strategyqa,best_of_n,10,0.8,1.0,66.73170999999999,1867.6,6.0,,0.8
+strategyqa,greedy_cot,10,0.7,1.0,14.347699999999998,394.2,1.0,,
+strategyqa,greedy_io,10,0.5,1.0,3.1156100000000007,80.0,1.0,,
+strategyqa,self_consistency,10,0.7,1.0,70.15142999999999,1978.0,5.0,,0.8
+strategyqa,tree_of_thought,10,0.5,1.0,116.14850000000001,6201.3,8.0,,
