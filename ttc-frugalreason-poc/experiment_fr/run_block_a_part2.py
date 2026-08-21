@@ -435,6 +435,7 @@ def run_block_a_part2():
                                     pass
                 
                 # Synchronize DB and JSONL
+                completed_set = db_completed.union(file_completed)
                 for qid in file_completed:
                     if qid not in db_completed:
                         cursor.execute("INSERT OR IGNORE INTO completed VALUES (?, ?, ?, CURRENT_TIMESTAMP)", (dataset_name, strategy, qid))
@@ -443,8 +444,7 @@ def run_block_a_part2():
                 strat_count = 0
                 for qid in qid_list:
                     # Check if already completed
-                    cursor.execute("SELECT 1 FROM completed WHERE dataset=? AND strategy=? AND qid=?", (dataset_name, strategy, qid))
-                    if cursor.fetchone():
+                    if qid in completed_set:
                         continue
                         
                     task_item = task_map.get(qid)

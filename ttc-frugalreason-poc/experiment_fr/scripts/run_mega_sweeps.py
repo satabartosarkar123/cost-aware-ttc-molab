@@ -177,13 +177,14 @@ def main():
                     print(f"  Failed {ds}/{strat}/{qid}: {e}")
                     continue
 
+                ans = res.get("selected_answer", res.get("final_answer", ""))
                 score_res = verifier.score(ds, item["question"], res.get("raw_response",""),
-                                            res["selected_answer"], item["gold_answer"])
+                                            ans, item["gold_answer"])
                 is_correct = score_res["score"] == 1.0
 
                 log_row = {
                     "model": MODEL, "dataset": ds, "strategy": strat, "qid": qid,
-                    "gold": item["gold_answer"], "selected_answer": res["selected_answer"],
+                    "gold": item["gold_answer"], "selected_answer": ans,
                     "correct": is_correct, "parse_success": res["parse_success"],
                     "parse_method": res.get("parse_method", ""), "latency_seconds": res["latency_seconds_total"],
                     "tokens": res["total_tokens"], "calls": res["model_calls"],

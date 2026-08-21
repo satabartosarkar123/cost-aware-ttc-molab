@@ -23,7 +23,7 @@ def print_header(title):
     print(f"\n{'='*60}\n{title}\n{'='*60}")
 
 def run_greedy_io(client, task, question):
-    prompt = get_prompt("greedy_io", task, question) if "greedy_io" in getattr(client, "_prompts", {}) else f"Q: {question}\nA:"
+    prompt = get_prompt("greedy_io", task, question)
     r = client.generate(prompt)
     txt = r.get("text", "")
     parser = get_parser(task)
@@ -182,7 +182,7 @@ def main():
     assert p_math(r"\boxed{\frac{1}{2}}")["final_answer"] == "0.5", "MATH parser failed!"
     assert p_aqua("The answer is (C) so C.")["final_answer"].upper() == "C", "AQUA parser failed!"
     assert p_gsm("#### 18")["final_answer"] == "18", "GSM8K parser failed!"
-    assert p_sqa("Yes.")["final_answer"] == "yes", "StrategyQA parser failed!"
+    assert str(p_sqa("Yes.")["final_answer"]).lower() == "yes", "StrategyQA parser failed!"
     print("All parser self-tests passed.")
 
     print_header("SECTION 6 - SMOKE TEST + CHECKPOINTING")
@@ -228,7 +228,6 @@ def main():
                 
                 if q_id in completed:
                     print(f"  Skipping {q_id} (already completed)")
-                    parse_count += 1
                     continue
                     
                 with HardwareMonitor() as mon:

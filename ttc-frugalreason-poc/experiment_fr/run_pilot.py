@@ -5,8 +5,11 @@ import subprocess
 import hashlib
 from pathlib import Path
 from tqdm import tqdm
+from collections import Counter
 
 from core.ollama_client import OllamaClient
+from core.prompt_manager import get_prompt
+from core.parsers import get_parser
 from core.task_loader import load_all_tasks
 from core.verifier import OutcomeVerifier
 from core.hardware_monitor import HardwareMonitor
@@ -15,8 +18,6 @@ from core.hardware_monitor import HardwareMonitor
 from strategies.frugal_reason_v3 import frugal_reason_v3_evaluate
 
 def greedy_cot_evaluate(client, task, question):
-    from core.prompt_manager import get_prompt
-    from core.parsers import get_parser
     prompt = get_prompt("greedy_cot", task, question)
     res = client.generate(prompt)
     txt = res.get("text", "")
@@ -34,9 +35,6 @@ def greedy_cot_evaluate(client, task, question):
     }
 
 def self_consistency_evaluate(client, task, question, k=5):
-    from core.prompt_manager import get_prompt
-    from core.parsers import get_parser
-    from collections import Counter
     prompt = get_prompt("greedy_cot", task, question)
     
     answers = []

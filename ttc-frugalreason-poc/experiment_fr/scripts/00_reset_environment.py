@@ -30,7 +30,10 @@ def reset_environment():
     # 3. Clear HuggingFace repo
     print("\nAttempting to clear Hugging Face repository...")
     try:
-        api = HfApi(token="REDACTED")
+        import os
+        token = os.environ.get("HF_TOKEN")
+        if not token: raise ValueError("HF_TOKEN env var not set")
+        api = HfApi(token=token)
         repo_id = "Satabarto/Molab_Checkpoints_Cost_AWARE"
         # List files and delete anything in checkpoints/
         files = api.list_repo_files(repo_id=repo_id, repo_type="dataset")

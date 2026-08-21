@@ -346,8 +346,11 @@ def run_preflight():
 
 def sync_to_hf(results_dir):
     try:
+        import os
         from huggingface_hub import HfApi
-        api = HfApi(token="REDACTED")
+        token = os.environ.get("HF_TOKEN")
+        if not token: raise ValueError("HF_TOKEN env var not set")
+        api = HfApi(token=token)
         api.upload_folder(
             folder_path=str(results_dir),
             path_in_repo="results_sync/block_a_logs",
@@ -430,15 +433,15 @@ def run_block_a():
                                     pass
                 
                 # Synchronize DB and JSONL
+                completed_set = db_completed.union(file_completed)
                 for qid in file_completed:
                     if qid not in db_completed:
                         cursor.execute("INSERT OR IGNORE INTO completed VALUES (?, ?, ?, CURRENT_TIMESTAMP)", (dataset_name, strategy, qid))
                 conn.commit()
                 
                 for qid in qid_list:
-                    # Refresh db_completed inside the loop for safety
-                    cursor.execute("SELECT 1 FROM completed WHERE dataset=? AND strategy=? AND qid=?", (dataset_name, strategy, qid))
-                    if cursor.fetchone():
+                    # Check if already completed using the merged set
+                    if qid in completed_set:
                         continue
                         
                     task_item = task_map.get(qid)

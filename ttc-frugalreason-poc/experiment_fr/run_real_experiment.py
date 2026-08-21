@@ -173,7 +173,7 @@ def main():
                     print(f"ERROR on {q_id}: {e}")
                     sys.exit(1) # STRICT RULE: STOP on failure
                     
-                ans = res.get("selected_answer", "")
+                ans = res.get("selected_answer", res.get("final_answer", ""))
                 raw_out = res.get("raw_output", str(ans))
                 eval_res = verifier.score(task_name, q_text, str(raw_out), str(ans), gold)
                 is_correct = eval_res["score"] == 1.0

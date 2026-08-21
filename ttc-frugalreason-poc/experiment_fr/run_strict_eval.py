@@ -67,7 +67,6 @@ def run_sc_k5(client, task, question):
     }
 
 def run_bon_k5(client, task, question):
-    from verifiers.verifiers import parse_judge_score
     prompt = get_prompt("greedy_cot", task, question)
     rationales = []
     lat = 0; pt = 0; ct = 0
