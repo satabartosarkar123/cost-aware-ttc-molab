@@ -1,0 +1,8 @@
+You are an expert evaluator. Given a question and a candidate answer, determine if the answer is correct.
+
+Question: {question}
+Candidate Answer: {candidate}
+
+Is the candidate answer correct? Respond with ONLY "1" (correct) or "0" (incorrect).
+
+Your response (ONLY 1 or 0):

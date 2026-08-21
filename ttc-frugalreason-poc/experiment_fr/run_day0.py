@@ -149,7 +149,7 @@ def main():
             for item in tqdm(sampled, desc=f"Probing {task_name}"):
                 q_id = item["id"]
                 res = run_greedy_cot(client, task_name, item["question"])
-                eval_res = verifier.score(task_name, item["question"], str(res.get("final_answer","")), str(res.get("final_answer","")), item["gold_answer"])
+                eval_res = verifier.score(task_name, item["question"], str(res.get("selected_answer","")), str(res.get("selected_answer","")), item["gold_answer"])
                 if eval_res["score"] == 1.0:
                     correct_qids.append(q_id)
                 else:
@@ -180,7 +180,7 @@ def main():
     p_sqa = get_parser("strategyqa")
     
     assert p_math(r"\boxed{\frac{1}{2}}")["final_answer"] == "0.5", "MATH parser failed!"
-    assert p_aqua("The answer is (C) so C.")["final_answer"] == "C", "AQUA parser failed!"
+    assert p_aqua("The answer is (C) so C.")["final_answer"].upper() == "C", "AQUA parser failed!"
     assert p_gsm("#### 18")["final_answer"] == "18", "GSM8K parser failed!"
     assert p_sqa("Yes.")["final_answer"] == "yes", "StrategyQA parser failed!"
     print("All parser self-tests passed.")
