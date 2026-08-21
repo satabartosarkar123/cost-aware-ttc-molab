@@ -180,7 +180,7 @@ def main():
     p_sqa = get_parser("strategyqa")
     
     assert p_math(r"\boxed{\frac{1}{2}}")["final_answer"] == "0.5", "MATH parser failed!"
-    assert p_aqua("The answer is (C) so C.")["final_answer"].upper() == "C", "AQUA parser failed!"
+    assert str(p_aqua("The answer is (C) so C.")["final_answer"]).upper() == "C", "AQUA parser failed!"
     assert p_gsm("#### 18")["final_answer"] == "18", "GSM8K parser failed!"
     assert str(p_sqa("Yes.")["final_answer"]).lower() == "yes", "StrategyQA parser failed!"
     print("All parser self-tests passed.")
