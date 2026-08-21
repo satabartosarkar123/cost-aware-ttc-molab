@@ -16,13 +16,13 @@ from core.parsers import get_parser
 from core.verifier import OutcomeVerifier
 from core.hardware_monitor import HardwareMonitor
 from strategies.frugal_reason_v3 import frugal_reason_v3_evaluate
+from verifiers.verifiers import parse_judge_score
+from core.prompt_manager import get_prompt
 
 def print_header(title):
     print(f"\n{'='*60}\n{title}\n{'='*60}")
 
 def run_greedy_io(client, task, question):
-    from core.prompt_manager import get_prompt
-    # For greedy_io, we assume there's a standard prompt or we just use a direct QA prompt without CoT.
     prompt = get_prompt("greedy_io", task, question) if "greedy_io" in getattr(client, "_prompts", {}) else f"Q: {question}\nA:"
     r = client.generate(prompt)
     txt = r.get("text", "")
@@ -36,8 +36,6 @@ def run_greedy_io(client, task, question):
     }
 
 def zero_shot_tot_k3(client, task, question):
-    # Minimal mock of ToT for smoke test: generate 3 reasoning paths, pick the best one with a self-eval.
-    from core.prompt_manager import get_prompt
     prompt = get_prompt("greedy_cot", task, question)
     rationales = []
     parser = get_parser(task)
@@ -45,18 +43,13 @@ def zero_shot_tot_k3(client, task, question):
         r = client.generate(prompt, temperature=0.7)
         ans = parser(r.get("text", ""))["final_answer"]
         rationales.append({"text": r.get("text", ""), "answer": ans})
-    
+
     best_ans = None
     best_score = -1
     for r in rationales:
         jp = get_prompt("best_of_n", task="", question=question, candidate=r["text"])
         jr = client.generate(jp, temperature=0.0)
-        score = 0.5
-        import re
-        sm = re.search(r'confidence:\s*(\d+)', jr.get("text", "").lower())
-        if sm: score = float(sm.group(1)) / 100.0
-        elif "yes" in jr.get("text", "").lower(): score = 1.0
-        elif "no" in jr.get("text", "").lower(): score = 0.0
+        score = parse_judge_score(jr.get("text", ""))
         if score > best_score:
             best_score = score
             best_ans = r["answer"]
@@ -65,7 +58,7 @@ def zero_shot_tot_k3(client, task, question):
         "model_calls": 6,
         "parse_success": best_ans is not None
     }
-
+    
 def main():
     print_header("SECTION 1 - OLLAMA & ENVIRONMENT SETUP")
     arch = platform.machine().lower()

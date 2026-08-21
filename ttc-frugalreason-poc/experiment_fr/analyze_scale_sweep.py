@@ -3,8 +3,6 @@ import json
 import math
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")  # non-interactive backend for Molab (no display)
 import matplotlib.pyplot as plt
 from pathlib import Path
 from tqdm import tqdm

@@ -1,0 +1,15 @@
+    # Pass 2: Deduplicate imports and organize them
+    sorted_imports = sorted(list(all_imports))
+    import_block = ["# ── ALL NOTEBOOK IMPORTS (DEDUPLICATED FOR MARIMO) ──\n"]
+    for imp in sorted_imports:
+        import_block.append(imp + "\n")
+        
+    # Put all imports into the first code cell
+    first_code_idx = next(i for i, c in enumerate(nb['cells']) if c['cell_type'] == 'code')
+    nb['cells'][first_code_idx]['source'] = import_block
+
+    # Pass 3: Wrap all other code cells in a subroutine
+    for i, cell in enumerate(nb['cells']):
+        if cell['cell_type'] != 'code':
+            continue
+        if i == first_code_idx:

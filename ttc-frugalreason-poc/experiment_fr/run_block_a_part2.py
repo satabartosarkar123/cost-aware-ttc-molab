@@ -25,6 +25,7 @@ from core.parsers import get_parser, parse_math, parse_strategyqa
 from core.verifier import OutcomeVerifier
 from core.prompt_manager import get_prompt
 from strategies.frugal_reason_v3 import frugal_reason_v3_evaluate
+from verifiers.verifiers import parse_judge_score
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -125,14 +126,7 @@ def run_bon_k5(client, task, question):
         ct += jr["completion_tokens"]
         judge_texts.append(jr["text"])
         
-        score = 0.5
-        sm = re.search(r'confidence:\s*(\d+)', jr["text"].lower())
-        if sm:
-            score = float(sm.group(1)) / 100.0
-        elif "yes" in jr["text"].lower():
-            score = 1.0
-        elif "no" in jr["text"].lower():
-            score = 0.0
+        score = parse_judge_score(jr["text"])
             
         if score > best_score:
             best_score = score

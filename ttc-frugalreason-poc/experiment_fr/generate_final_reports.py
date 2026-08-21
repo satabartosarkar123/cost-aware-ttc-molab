@@ -2,19 +2,11 @@ import os
 import json
 from pathlib import Path
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")  # non-interactive backend for Molab (no display)
 import matplotlib.pyplot as plt
-try:
-    from fpdf import FPDF
-except ImportError:
-    FPDF = None
+from fpdf import FPDF
 import numpy as np
 
-# ── Path resolution: works on both local Windows and Molab/Linux ─────────────
-_THIS_FILE = Path(__file__).resolve()
-BASE_DIR = _THIS_FILE.parent   # .../experiment_fr
-
+BASE_DIR = Path(r"C:\Users\USER\Cost-Aware-Test-Time\Cost-Aware-Test-time\ttc-frugalreason-poc\experiment_fr")
 RAW_LOGS = BASE_DIR / "results" / "raw_logs" / "frugal_reason_v3_raw_seed0.jsonl"
 COMP_CSV = BASE_DIR / "results" / "summary" / "comparison_vs_baselines.csv"
 REPORTS_DIR = BASE_DIR / "reports"

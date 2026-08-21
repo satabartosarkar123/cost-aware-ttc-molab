@@ -48,12 +48,8 @@ def run_experiment(config: dict, model_name: str, tasks: dict):
     from core.verifier import OutcomeVerifier
 
     ollama_cfg = config.get("ollama", {})
-    # OLLAMA_BASE_URL env var takes priority over config.yaml (set in molab_run.py)
-    import os as _os
-    _base_url = _os.environ.get("OLLAMA_BASE_URL",
-                                ollama_cfg.get("base_url", "http://localhost:11434"))
     client = OllamaClient(
-        base_url=_base_url,
+        base_url=ollama_cfg.get("base_url", "http://localhost:11434"),
         model=model_name,
         timeout=ollama_cfg.get("timeout_seconds", 60),
         max_retries=ollama_cfg.get("max_retries", 3),

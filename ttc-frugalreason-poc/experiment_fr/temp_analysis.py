@@ -1,9 +1,7 @@
 import json
 import os
-from pathlib import Path
 
-# Resolve relative to this file so it works on both Windows and Molab/Linux
-base_dir = str(Path(__file__).resolve().parent / "results" / "block_a_part2_logs")
+base_dir = "c:/Users/USER/Cost-Aware-Test-Time/Cost-Aware-Test-time/ttc-frugalreason-poc/experiment_fr/results/block_a_part2_logs"
 
 def load_results(strategy):
     results = {}

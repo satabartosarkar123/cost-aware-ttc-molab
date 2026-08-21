@@ -1,0 +1,66 @@
+import subprocess, os
+from pathlib import Path
+from datetime import datetime, timezone
+
+# ── SET YOUR TOKEN ONCE ───────────────────────────────────────────
+GITHUB_TOKEN = "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"  # PAT — repo scope   # paste your PAT here (github.com → Settings → Developer settings → PAT)
+GITHUB_REPO  = "https://github.com/satabartosarkar123/cost-aware-ttc-molab.git"
+# ─────────────────────────────────────────────────────────────────
+
+token = GITHUB_TOKEN or os.environ.get("GITHUB_TOKEN", "")
+nb_dir = Path(os.environ.get("NOTEBOOK_DIR", "."))
+
+if not token:
+    print("ERROR: Set GITHUB_TOKEN above — get it from github.com → Settings → Developer settings → Personal access tokens → Classic → repo scope")
+else:
+    auth_url = GITHUB_REPO.replace("https://", f"https://{token}@")
+
+    def git(cmd): return subprocess.run(cmd, shell=True, cwd=str(nb_dir), capture_output=True, text=True)
+
+    # Init repo if not already
+    if not (nb_dir / ".git").exists():
+        print("Initialising git repo...")
+        git("git init -b main")
+        git(f"git remote add origin {auth_url}")
+        git('git config user.name "Molab Runner"')
+        git('git config user.email "molab@runner.local"')
+    else:
+        git(f"git remote set-url origin {auth_url}")
+
+    # Stage result dirs
+    RESULT_DIRS = [
+        "rq2_part1/results", "rq2_part1/checkpoints", "rq2_part1/reports", "rq2_part1/plots",
+        "ttc-frugalreason-poc/experiment_fr/results", "ttc-frugalreason-poc/experiment_fr/reports",
+        "ttc-task-poc/experiment/results_50", "ttc-task-poc/experiment/reports_50",
+    ]
+    staged = 0
+    for d in RESULT_DIRS:
+        if (nb_dir / d).exists():
+            git(f"git add {d}")
+            staged += 1
+
+    if staged == 0:
+        print("Nothing to push — no result directories found yet.")
+    else:
+        diff = git("git diff --cached --quiet")
+        if diff.returncode == 0:
+            print("No new changes since last push.")
+        else:
+            ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+            msg = f"Molab results — {ts}"
+            git(f'git commit -m "{msg}"')
+
+            # Push — handle first push (no upstream yet)
+            r = git("git push origin main")
+            if r.returncode != 0:
+                r2 = git("git push -u origin main")
+                if r2.returncode != 0:
+                    print(f"Push failed: {r2.stderr.strip()}")
+                else:
+                    print(f"Pushed: {msg}")
+            else:
+                print(f"Pushed: {msg}")
+
+            print("\nOn your LOCAL PC, run:")
+            print("  python sync_from_molab.py")
+            print("or simply: git pull")

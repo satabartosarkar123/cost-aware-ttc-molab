@@ -6,7 +6,6 @@ Uses the /api/generate endpoint (streaming disabled for simplicity).
 
 import time
 import logging
-import os
 import requests
 from typing import Optional, Dict, Any, List
 
@@ -18,17 +17,14 @@ class OllamaClient:
 
     def __init__(
         self,
-        base_url: str = None,
+        base_url: str = "http://localhost:11434",
         model: str = "qwen2.5:3b",
         timeout: int = 60,
         max_retries: int = 3,
         retry_delay: float = 2.0,
     ):
-        # Priority: constructor arg → OLLAMA_BASE_URL env var → localhost
-        if base_url is None:
-            base_url = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
         self.base_url = base_url.rstrip("/")
-        self.model = os.environ.get("OLLAMA_MODEL", model)
+        self.model = model
         self.timeout = timeout
         self.max_retries = max_retries
         self.retry_delay = retry_delay

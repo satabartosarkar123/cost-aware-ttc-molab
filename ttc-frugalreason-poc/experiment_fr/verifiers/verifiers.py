@@ -4,6 +4,31 @@ import operator
 from fractions import Fraction
 from core.prompt_manager import get_prompt
 
+def parse_judge_score(text):
+    """Parse judge output into float in [0, 1]."""
+    t = text.lower().strip()
+    # Priority 1: binary word detection
+    if any(w in t for w in ["incorrect", "wrong"]):
+        return 0.0
+    if any(w in t for w in ["correct", "right"]):
+        return 1.0
+    if t in ("no", "false", "0"):
+        return 0.0
+    if t in ("yes", "true", "1"):
+        return 1.0
+    # Priority 2: number with scale inference
+    m = re.search(r'confidence:\s*(\d+(?:\.\d+)?)', t)
+    if not m:
+        nums = re.findall(r'\b(\d+(?:\.\d+)?)\b', t)
+        if nums:
+            m = type('M', (), {'group': lambda s, x: nums[-1]})()
+    if m:
+        v = float(m.group(1))
+        if v <= 1.0:   return v          # boolean / probability
+        elif v <= 10.0: return v / 10.0   # 1-10 scale
+        else:           return v / 100.0  # 0-100 scale
+    return 0.5  # fallback
+
 # --- Game24 Verifier ---
 def _eval_ast(node):
     operators = {
@@ -108,20 +133,4 @@ def llm_judge(client, question: str, solution: str) -> float:
     resp = client.generate(prompt, max_tokens=256, temperature=0.0)
     
     # Parse confidence/score
-    text = resp.get("text", "").lower()
-    
-    # Look for "confidence: 100" or similar
-    score_match = re.search(r'confidence:\s*(\d+)', text)
-    if score_match:
-        return float(score_match.group(1)) / 100.0
-        
-    # Look for raw number
-    raw_nums = re.findall(r'\b(100|[1-9]?[0-9])\b', text)
-    if raw_nums:
-        return float(raw_nums[-1]) / 100.0
-        
-    # fallback
-    if "yes" in text or "correct" in text:
-        return 1.0
-        
-    return 0.0
+    return parse_judge_score(resp.get("text", ""))

@@ -14,6 +14,7 @@ from core.verifier import OutcomeVerifier
 from core.prompt_manager import get_prompt, get_tot_propose_prompt, get_tot_value_prompt
 from core.parsers import get_parser
 from strategies.frugal_reason_v3 import frugal_reason_v3_evaluate
+from verifiers.verifiers import parse_judge_score
 
 def check_ollama_running(base_url="http://localhost:11434"):
     try:
@@ -82,12 +83,7 @@ def run_bon_k5(client, task, question):
         jr = client.generate(jp, temperature=0.0)
         lat += jr["latency_seconds"]; pt += jr["prompt_tokens"]; ct += jr["completion_tokens"]
         # rudimentary parse of judge score
-        score = 0.5
-        import re
-        sm = re.search(r'confidence:\s*(\d+)', jr["text"].lower())
-        if sm: score = float(sm.group(1)) / 100.0
-        elif "yes" in jr["text"].lower(): score = 1.0
-        elif "no" in jr["text"].lower(): score = 0.0
+        score = parse_judge_score(jr["text"])
         
         if score > best_score:
             best_score = score

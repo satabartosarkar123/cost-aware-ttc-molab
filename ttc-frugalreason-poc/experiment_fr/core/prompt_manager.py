@@ -99,7 +99,14 @@ def get_prompt(strategy: str, task: str, question: str, candidate: str = "") -> 
     elif strategy == "greedy_cot":
         return get_cot_prompt(task, question)
     elif strategy == "best_of_n":
-        # We treat this as an ORM judge without gold
-        return get_orm_judge_prompt(question, candidate, gold="Unknown")
+        return (
+            "You are an expert evaluator. Given a question and a candidate\n"
+            "solution, determine whether the solution is CORRECT or INCORRECT.\n\n"
+            f"Question: {question}\n\n"
+            "Candidate solution:\n"
+            f"{candidate}\n\n"
+            "Is this solution correct? Answer with exactly one word:\n"
+            "CORRECT or INCORRECT."
+        )
     else:
         raise ValueError(f"Unknown strategy for prompt: {strategy}")

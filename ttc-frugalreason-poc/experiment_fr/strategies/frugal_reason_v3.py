@@ -4,7 +4,7 @@ import json
 from typing import Dict, Any, List
 from core.prompt_manager import get_prompt
 from core.parsers import get_parser
-from verifiers.verifiers import verify_game24, verify_gsm8k_steps, llm_judge
+from verifiers.verifiers import verify_game24, verify_gsm8k_steps, llm_judge, parse_judge_score
 from verifiers.clustering import cluster_rationales
 
 def frugal_reason_v3_evaluate(client, task: str, question: str, input_metadata: str = "", enable_early_exit: bool = True, alpha: float = 0.6) -> dict:
@@ -175,20 +175,15 @@ def frugal_reason_v3_evaluate(client, task: str, question: str, input_metadata: 
                 log_data["tokens"] += resp.get("prompt_tokens", 0) + resp.get("completion_tokens", 0)
                 
                 text = resp.get("text", "").lower()
-                import re
-                score_match = re.search(r'confidence:\s*(\d+)', text)
-                if score_match:
-                    V_scores[str(a)] = float(score_match.group(1)) / 100.0
-                else:
-                    raw_nums = re.findall(r'\b(100|[1-9]?[0-9])\b', text)
-                    if raw_nums:
-                        V_scores[str(a)] = float(raw_nums[-1]) / 100.0
-                    else:
-                        if "yes" in text or "correct" in text:
-                            V_scores[str(a)] = 1.0
-                        else:
-                            V_scores[str(a)] = 0.5
-                            log_data["judge_parse_fails"] += 1
+                V_scores[str(a)] = parse_judge_score(text)
+                if V_scores[str(a)] == 0.5:
+                    log_data["judge_parse_fails"] += 1
+                
+                log_data.setdefault("judge_texts", []).append({
+                    "answer": str(a),
+                    "raw_text": resp.get("text", ""),
+                    "parsed_score": V_scores[str(a)]
+                })
 
             # For unjudged distinct answers, default V = 0.0
             for a in distinct_answers:
@@ -201,18 +196,15 @@ def frugal_reason_v3_evaluate(client, task: str, question: str, input_metadata: 
                     rep = answer_reps[str(a)]
                     prompt = get_prompt("best_of_n", task="", question=question, candidate=rep["representative_rationale"])
                     hidden_resp = client.generate(prompt, max_tokens=256, temperature=0.0)
-                    text = hidden_resp.get("text", "").lower()
-                    score_match = re.search(r'confidence:\s*(\d+)', text)
-                    if score_match:
-                        log_data["hidden_judge_scores"][str(a)] = float(score_match.group(1)) / 100.0
-                    else:
-                        raw_nums = re.findall(r'\b(100|[1-9]?[0-9])\b', text)
-                        if raw_nums:
-                            log_data["hidden_judge_scores"][str(a)] = float(raw_nums[-1]) / 100.0
-                        elif "yes" in text or "correct" in text:
-                            log_data["hidden_judge_scores"][str(a)] = 1.0
-                        else:
-                            log_data["hidden_judge_scores"][str(a)] = 0.5
+                    text = hidden_resp.get("text", "").strip().lower()
+                    log_data["hidden_judge_scores"][str(a)] = parse_judge_score(text)
+                    
+                    log_data.setdefault("judge_texts", []).append({
+                        "answer": str(a),
+                        "raw_text": hidden_resp.get("text", ""),
+                        "parsed_score": log_data["hidden_judge_scores"][str(a)]
+                    })
+
                 else:
                     log_data["hidden_judge_scores"][str(a)] = V_scores[str(a)]
 
@@ -230,7 +222,7 @@ def frugal_reason_v3_evaluate(client, task: str, question: str, input_metadata: 
             log_data["candidates"].append({
                 "answer": a,
                 "prior": prior_a,
-                "V": V_a,
+                "V_raw": V_a,
                 "S": S_a
             })
             

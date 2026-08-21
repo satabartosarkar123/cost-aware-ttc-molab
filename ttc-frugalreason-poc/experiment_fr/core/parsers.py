@@ -172,7 +172,7 @@ def parse_aqua(response: str) -> dict:
     # Try case-insensitive matching of answer patterns first
     match = re.search(r"(?i)answer\s*(?:is|:)?\s*\(?([a-e])\)?", response)
     if match:
-        val = match.group(1).lower()
+        val = match.group(1).upper()
         result["strict_answer"] = val
         result["final_answer"] = val
         result["parse_method"] = "strict"
@@ -182,7 +182,7 @@ def parse_aqua(response: str) -> dict:
     # Check other patterns like "Option X", "choose (X)"
     match = re.search(r"(?i)(?:option|choose)\s*\(?([a-e])\)?", response)
     if match:
-        val = match.group(1).lower()
+        val = match.group(1).upper()
         result["strict_answer"] = val
         result["final_answer"] = val
         result["parse_method"] = "strict"
@@ -192,7 +192,7 @@ def parse_aqua(response: str) -> dict:
     # Lenient fallback: just the last freestanding letter a-e
     matches = re.findall(r"(?i)\b([a-e])\b", response)
     if matches:
-        val = matches[-1].lower()
+        val = matches[-1].upper()
         result["lenient_answer"] = val
         result["final_answer"] = val
         result["parse_method"] = "lenient"

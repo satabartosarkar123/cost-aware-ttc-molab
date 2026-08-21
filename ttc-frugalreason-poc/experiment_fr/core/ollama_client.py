@@ -1,13 +1,7 @@
-import requests, time, os
-
+import requests, time
 class OllamaClient:
-    def __init__(self, model="qwen2.5:3b", base_url=None):
-        self.model = model
-        # Priority: constructor arg → env var → localhost
-        if base_url is None:
-            base_url = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
-        self.base_url = base_url.rstrip("/")
-
+    def __init__(self, model="qwen2.5:3b", base_url="http://localhost:11434"):
+        self.model = model; self.base_url = base_url
     def generate(self, prompt, temperature=0.7, max_tokens=512, stop=None):
         payload = {"model": self.model, "prompt": prompt, "stream": False,
                    "options": {"temperature": temperature,

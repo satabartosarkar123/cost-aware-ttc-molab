@@ -15,7 +15,10 @@ def _safe_eval(expr: str) -> Optional[float]:
     if not re.fullmatch(r"[\d+\-*/().\s]+", expr):
         return None
     try:
-        result = eval(expr, {"__builtins__": {}}, {})
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", SyntaxWarning)
+            result = eval(expr, {"__builtins__": {}}, {})
         return float(result)
     except Exception:
         return None

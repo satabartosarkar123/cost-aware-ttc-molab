@@ -7,12 +7,6 @@ and accuracy-related signals for each strategy and each selected question.
 
 Part 1 is NOT budget-constrained. No token budgets are enforced.
 Budget simulation will be Part 2.
-
-Molab/Linux version — patched for:
-  • Linux subprocess launch of 'ollama serve' (no CREATE_NO_WINDOW)
-  • CUDA check uses nvidia-smi fallback when torch is absent
-  • Game-of-24 data resolved to /workspace paths first
-  • matplotlib backend forced to 'Agg' (no display on remote server)
 """
 
 import os
@@ -30,21 +24,6 @@ from pathlib import Path
 from collections import Counter
 from typing import Dict, Any, Optional, List, Tuple
 
-# ── Force non-interactive matplotlib backend (no display on Molab) ──
-import matplotlib
-matplotlib.use("Agg")
-
-# ── Drive-backed checkpointing (Molab) ──────────────────────────────
-# Adds /workspace to sys.path so drive_checkpoint.py is importable
-# whether the pipeline is run from rq2_part1/ or the repo root.
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-try:
-    import drive_checkpoint as _dcp
-    _DRIVE_SYNC = True
-except ImportError:
-    _dcp = None  # type: ignore
-    _DRIVE_SYNC = False
-
 # ── Force UTF-8 output ──────────────────────────────────────────────
 os.environ.pop("SSLKEYLOGFILE", None)
 if hasattr(sys.stdout, "reconfigure"):
@@ -54,7 +33,7 @@ if hasattr(sys.stdout, "reconfigure"):
     except Exception:
         pass
 
-# ── CUDA Check (works with or without PyTorch) ───────────────────────
+# ── CUDA Check ──────────────────────────────────────────────────────
 try:
     import torch
     if not torch.cuda.is_available():
@@ -63,26 +42,15 @@ try:
     gpu_name = torch.cuda.get_device_name(0)
     print(f"[CUDA CHECK] SUCCESS: {gpu_name} detected! GPU acceleration is active.\n" + "-"*60)
 except ImportError:
-    # No PyTorch — fall back to nvidia-smi (always present on Molab)
-    _nsmi = subprocess.run(
-        ["nvidia-smi", "--query-gpu=name", "--format=csv,noheader"],
-        capture_output=True, text=True,
-    )
-    if _nsmi.returncode == 0:
-        _gpu_name = _nsmi.stdout.strip().splitlines()[0]
-        print(f"[CUDA CHECK] SUCCESS (nvidia-smi): {_gpu_name} detected!\n" + "-"*60)
-    else:
-        print("[WARNING] PyTorch absent and nvidia-smi failed. Assuming Ollama handles GPU.\n" + "-"*60)
+    print("[WARNING] PyTorch not found. Skipping strict CUDA check, assuming Ollama handles GPU.\n" + "-"*60)
 
 # ====================================================================
 # CONSTANTS
 # ====================================================================
 RUN_ID = f"rq2p1_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:6]}"
 MAX_RUNTIME_HOURS = 15
-# Read from env var so Molab can point to a remote Kaggle-hosted Ollama.
-# Set OLLAMA_BASE_URL in molab_run.py before launching. Falls back to localhost.
-OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434").rstrip("/")
-PREFERRED_MODEL = os.environ.get("OLLAMA_MODEL", "qwen2.5:3b")
+OLLAMA_BASE_URL = "http://localhost:11434"
+PREFERRED_MODEL = "qwen2.5:3b"
 FALLBACK_MODEL = "llama3.2:3b"
 MODEL_CALL_TIMEOUT = 180
 MAX_RETRIES = 2
@@ -213,18 +181,7 @@ def append_jsonl(path: Path, record: Dict):
 
 
 def load_checkpoints() -> set:
-    """
-    Load completed checkpoint keys as a set of (task, local_question_id, strategy) tuples.
-    Pulls the latest checkpoint file from Google Drive first so a fresh
-    Molab session resumes exactly where the last one died.
-    """
-    # ── Pull latest from Drive before reading ───────────────────────────────
-    if _DRIVE_SYNC:
-        try:
-            _dcp.init()  # idempotent — safe to call multiple times
-        except Exception as e:
-            print(f"[WARN] Drive checkpoint pull failed: {e} — running from local only")
-
+    """Load completed checkpoint keys as a set of (task, local_question_id, strategy) tuples."""
     completed = set()
     if CHECKPOINT_FILE.exists():
         try:
@@ -339,13 +296,12 @@ def check_ollama() -> bool:
 
 
 def start_ollama_serve():
-    """Try to start ollama serve in background (Linux / Molab)."""
+    """Try to start ollama serve in background."""
     try:
-        subprocess.Popen(
-            ["ollama", "serve"],
-            stdout=open("/workspace/ollama.log", "a"),
-            stderr=subprocess.STDOUT,
-        )
+        if platform.system() == "Windows":
+            subprocess.Popen(["ollama", "serve"], creationflags=subprocess.CREATE_NO_WINDOW)
+        else:
+            subprocess.Popen(["ollama", "serve"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         time.sleep(5)
     except Exception as e:
         log_issue("WARNING", "ollama", f"Could not start ollama serve: {e}")
@@ -1232,10 +1188,9 @@ def load_game24_selected() -> List[Dict[str, Any]]:
     # Try to download from the official Tree of Thoughts repo
     game24_data = None
 
-    # Try to read from local file if it exists
+    # Method 1: Try to read from local file if it exists
     local_paths = [
         BASE_DIR / "data" / "24.csv",
-        Path("/workspace/Cost-Aware-Test-Time/rq2_part1/data/24.csv"),   # Molab workspace
         BASE_DIR.parent / "ttc-task-poc" / "tree-of-thought-llm" / "data" / "24" / "24.csv",
         Path("24.csv"),
     ]
@@ -1421,13 +1376,6 @@ def run_strategy_for_question(
         "status": summary["status"],
         "timestamp": summary["timestamp"],
     })
-
-    # ── Push checkpoint to Google Drive immediately ──────────────────────────
-    if _DRIVE_SYNC:
-        try:
-            _dcp.push_checkpoint(CHECKPOINT_FILE)
-        except Exception as e:
-            print(f"[WARN] Drive checkpoint push failed: {e}")
 
     return summary
 
@@ -1809,6 +1757,8 @@ def generate_token_percentiles_csv(all_summaries: List[Dict]):
 def generate_plots(all_summaries: List[Dict]):
     """Generate all required plots."""
     try:
+        import matplotlib
+        matplotlib.use("Agg")
         import matplotlib.pyplot as plt
         import numpy as np
         from collections import defaultdict

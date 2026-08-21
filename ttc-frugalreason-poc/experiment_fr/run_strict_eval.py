@@ -14,8 +14,10 @@ from core.verifier import OutcomeVerifier
 from core.prompt_manager import get_prompt
 from core.parsers import get_parser
 from strategies.frugal_reason_v3 import frugal_reason_v3_evaluate
+from verifiers.verifiers import parse_judge_score
 
 try:
+    # pyrefly: ignore [missing-import]
     import pynvml
     pynvml.nvmlInit()
     handle = pynvml.nvmlDeviceGetHandleByIndex(0)
@@ -65,6 +67,7 @@ def run_sc_k5(client, task, question):
     }
 
 def run_bon_k5(client, task, question):
+    from verifiers.verifiers import parse_judge_score
     prompt = get_prompt("greedy_cot", task, question)
     rationales = []
     lat = 0; pt = 0; ct = 0
@@ -82,12 +85,7 @@ def run_bon_k5(client, task, question):
         jr = client.generate(jp, temperature=0.0)
         lat += jr.get("latency", 0); pt += jr.get("prompt_tokens", 0); ct += jr.get("completion_tokens", 0)
         
-        score = 0.5
-        import re
-        sm = re.search(r'confidence:\s*(\d+)', jr.get("text", "").lower())
-        if sm: score = float(sm.group(1)) / 100.0
-        elif "yes" in jr.get("text", "").lower(): score = 1.0
-        elif "no" in jr.get("text", "").lower(): score = 0.0
+        score = parse_judge_score(jr.get("text", ""))
         
         if score > best_score:
             best_score = score

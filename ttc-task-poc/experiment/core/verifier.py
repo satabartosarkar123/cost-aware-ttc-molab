@@ -1,3 +1,4 @@
+import warnings
 """
 verifier.py — ORM-proxy outcome verifier for Best-of-N strategy.
 
@@ -102,7 +103,9 @@ class OutcomeVerifier:
             try:
                 # Very restricted eval: only digits and arithmetic
                 if re.fullmatch(r"[\d+\-*/().\s]+", expr):
-                    val = eval(expr, {"__builtins__": {}}, {})
+                    with warnings.catch_warnings():
+                        warnings.simplefilter('ignore', SyntaxWarning)
+                        val = eval(expr, {"__builtins__": {}}, {})
                     if abs(val - 24) < 1e-6:
                         return {"score": 1.0, "method": "eval", "detail": f"expr='{expr}' -> {val}"}
             except Exception:
